@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CertifyCloud — Certificate Generator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="index.html" class="brand">
+        <div class="brand-mark">◈</div>
+        CertifyCloud
+      </a>
+      <div class="nav-links">
+        <a href="index.html" class="active">Generate</a>
+        <a href="verify.html">Verify</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-badge">
+      <span class="dot"></span>
+      Cloud-backed certification
+    </div>
+    <h1>Issue verifiable<br><span class="accent">digital certificates</span></h1>
+    <p>Create tamper-proof certificates secured in the cloud. Each one gets a unique ID and QR code that anyone can verify in seconds.</p>
+  </section>
+
+  <!-- MAIN -->
+  <main>
+    <div class="container">
+
+      <!-- FORM CARD -->
+      <div class="card">
+        <div class="card-header">
+          <h2>Certificate Details</h2>
+          <p>Fill in the information below to generate and store a new certificate.</p>
+        </div>
+
+        <div class="form-row">
+          <div>
+            <label>Student Name</label>
+            <input id="name" placeholder="e.g., Aarav Sharma">
+          </div>
+          <div>
+            <label>Grade / Achievement</label>
+            <input id="grade" placeholder="e.g., A+ / Distinction">
+          </div>
+        </div>
+
+        <label>Course / Program Name</label>
+        <input id="course" placeholder="e.g., Cloud Computing Professional Program">
+
+        <label>Issue Date</label>
+        <input id="date" type="date">
+
+        <button id="generateBtn" class="full-width" style="margin-top: 8px;">
+          Generate &amp; Save to Cloud
+        </button>
+        <div class="status" id="status"></div>
+      </div>
+
+      <!-- CERTIFICATE PREVIEW -->
+      <div id="previewArea" style="display:none;">
+        <div class="section-head">
+          <div>
+            <h2>Certificate Preview</h2>
+            <p>Ready to share — download it as a high-resolution PNG.</p>
+          </div>
+          <button id="downloadBtn" class="secondary">⬇ Download PNG</button>
+        </div>
+
+        <div class="cert-wrapper">
+          <div id="certificate">
+            <!-- TOP BRAND BAR -->
+            <div class="cert-topbar">
+              <div class="cert-brand">
+                <div class="cert-logo">◈</div>
+                <div>
+                  <div class="cert-brand-name">CertifyCloud</div>
+                  <div class="cert-brand-sub">Certification Authority</div>
+                </div>
+              </div>
+              <div class="cert-verify-chip">
+                <span class="chip-dot"></span>
+                Blockchain Verified
+              </div>
+            </div>
+
+            <!-- MAIN BODY -->
+            <div class="cert-inner">
+              <div class="cert-seal-watermark"><span>◈</span></div>
+
+              <div class="cert-eyebrow">Certificate of Achievement</div>
+              <div class="cert-title">Professional Certification</div>
+              <div class="cert-divider"></div>
+
+              <div class="cert-lead">This is to certify that</div>
+              <div class="cert-name-wrap">
+                <div class="cert-name" id="cName">Student Name</div>
+              </div>
+
+              <div class="cert-course-label">has successfully completed the program</div>
+              <div class="cert-course" id="cCourse">Course Name</div>
+
+              <div class="cert-grade-wrap" style="margin-top: 16px;">
+                <span class="cert-grade-badge">Awarded: <span id="cGrade">—</span></span>
+              </div>
+
+              <!-- META ROW -->
+              <div class="cert-meta">
+                <div class="cert-meta-item">
+                  <div class="cert-meta-label">Issued On</div>
+                  <div class="cert-meta-value" id="cDate">—</div>
+                </div>
+
+                <div class="cert-meta-item">
+                  <div class="cert-sign-line"></div>
+                  <div class="cert-sign-name">Dr. R. Mehta</div>
+                  <div class="cert-sign-role">Authorized Signatory</div>
+                </div>
+
+                <div class="cert-meta-item">
+                  <img id="cQr" class="cert-qr" src="" alt="Verify QR">
+                  <div class="cert-meta-label">Scan to Verify</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- BOTTOM ID STRIP -->
+            <div class="cert-id-strip">
+              <div>
+                <span class="id-label">Certificate ID</span>
+                <span class="id-value" id="cId">—</span>
+              </div>
+              <div class="id-right">
+                <span class="pill">Verify at verify.html</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <div class="brand-mark" style="width: 24px; height: 24px; font-size: 12px;">◈</div>
+        CertifyCloud
+      </div>
+      <div>Secured by Supabase · © 2025 CertifyCloud</div>
+    </div>
+  </footer>
+
+  <script>
+    // ================= REPLACE THESE TWO LINES =================
+    const SUPABASE_URL = "https://tbwxzfoqdzrbqivqlmnj.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_fX0aVfUANaSshCFmFAMAgg_HmxW2cTK";
+    // ===========================================================
+
+    const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    document.getElementById('date').valueAsDate = new Date();
+
+    function makeCertId() {
+      const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+      let id = "CERT-";
+      for (let i = 0; i < 8; i++) {
+        id += chars[Math.floor(Math.random() * chars.length)];
+      }
+      return id;
+    }
+
+    document.getElementById('generateBtn').addEventListener('click', async () => {
+      const name = document.getElementById('name').value.trim();
+      const course = document.getElementById('course').value.trim();
+      const grade = document.getElementById('grade').value.trim();
+      const date = document.getElementById('date').value;
+      const status = document.getElementById('status');
+
+      if (!name || !course || !date) {
+        status.textContent = "⚠ Please fill name, course and date.";
+        return;
+      }
+
+      status.textContent = "Saving to cloud...";
+      document.getElementById('generateBtn').disabled = true;
+
+      const certId = makeCertId();
+
+      const { error } = await sb.from('certificates').insert([{
+        cert_id: certId,
+        student_name: name,
+        course_name: course,
+        grade: grade || "Completed",
+        issue_date: date
+      }]);
+
+      document.getElementById('generateBtn').disabled = false;
+
+      if (error) {
+        status.textContent = "❌ Cloud error: " + error.message;
+        return;
+      }
+
+      document.getElementById('cName').textContent = name;
+      document.getElementById('cCourse').textContent = course;
+      document.getElementById('cDate').textContent = new Date(date).toLocaleDateString('en-US', {
+        year: 'numeric', month: 'long', day: 'numeric'
+      });
+      document.getElementById('cGrade').textContent = grade || "Completed";
+      document.getElementById('cId').textContent = certId;
+
+      const verifyUrl = location.origin + location.pathname.replace("index.html", "") + "verify.html?id=" + certId;
+
+      document.getElementById('cQr').src =
+        "https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=" + encodeURIComponent(verifyUrl);
+
+      document.getElementById('previewArea').style.display = 'block';
+      status.textContent = "✅ Saved to cloud. Certificate ID: " + certId;
+      document.getElementById('previewArea').scrollIntoView({behavior: 'smooth'});
+    });
+
+    document.getElementById('downloadBtn').addEventListener('click', () => {
+      const cert = document.getElementById('certificate');
+      html2canvas(cert, { scale: 2, backgroundColor: '#ffffff', useCORS: true }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = 'certificate.png';
+        link.href = canvas.toDataURL();
+        link.click();
+      });
+    });
+  </script>
+</body>
+</html>

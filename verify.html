@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CertifyCloud — Verify Certificate</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="index.html" class="brand">
+        <div class="brand-mark">◈</div>
+        CertifyCloud
+      </a>
+      <div class="nav-links">
+        <a href="index.html">Generate</a>
+        <a href="verify.html" class="active">Verify</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-badge">
+      <span class="dot"></span>
+      Instant cloud verification
+    </div>
+    <h1>Verify a <span class="accent">certificate</span></h1>
+    <p>Enter the certificate ID below, or scan the QR code on any CertifyCloud certificate to validate its authenticity.</p>
+  </section>
+
+  <!-- MAIN -->
+  <main>
+    <div class="container">
+
+      <!-- SEARCH CARD -->
+      <div class="card">
+        <div class="card-header">
+          <h2>Certificate Lookup</h2>
+          <p>Enter the unique ID printed on the certificate (format: CERT-XXXXXXXX).</p>
+        </div>
+
+        <label>Certificate ID</label>
+        <input id="certIdInput" placeholder="e.g., CERT-A3F9K2M4" autocomplete="off" style="font-family: 'JetBrains Mono', monospace; letter-spacing: 0.06em;">
+
+        <button id="verifyBtn" class="full-width">Verify Certificate</button>
+        <div class="status" id="status"></div>
+      </div>
+
+      <!-- RESULT -->
+      <div id="result"></div>
+
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <div class="brand-mark" style="width: 24px; height: 24px; font-size: 12px;">◈</div>
+        CertifyCloud
+      </div>
+      <div>Secured by Supabase · © 2025 CertifyCloud</div>
+    </div>
+  </footer>
+
+  <script>
+    // ================= REPLACE THESE TWO LINES (same as index.html) =================
+    const SUPABASE_URL = "https://tbwxzfoqdzrbqivqlmnj.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_fX0aVfUANaSshCFmFAMAgg_HmxW2cTK";
+    // ================================================================================
+
+    const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    const input = document.getElementById('certIdInput');
+    const statusEl = document.getElementById('status');
+    const resultEl = document.getElementById('result');
+
+    async function verify(id) {
+      resultEl.innerHTML = '';
+      statusEl.textContent = 'Looking up in cloud...';
+
+      const { data, error } = await sb
+        .from('certificates')
+        .select('*')
+        .eq('cert_id', id.toUpperCase())
+        .maybeSingle();
+
+      if (error) {
+        statusEl.textContent = '❌ Error: ' + error.message;
+        return;
+      }
+
+      statusEl.textContent = '';
+
+      if (!data) {
+        resultEl.innerHTML = `
+          <div class="result invalid">
+            <div class="result-header">
+              <div class="result-icon">✕</div>
+              <div>
+                <div class="result-title">Certificate Not Found</div>
+                <div class="result-subtitle">We couldn't verify this certificate in our records.</div>
+              </div>
+            </div>
+            <div class="result-body">
+              <p style="font-size:14px; color:#4b5563; padding-top: 12px;">
+                No certificate exists in the cloud database with ID <strong style="font-family: 'JetBrains Mono', monospace;">${id}</strong>.
+                It may be a forgery or the ID was typed incorrectly.
+              </p>
+            </div>
+          </div>`;
+        return;
+      }
+
+      resultEl.innerHTML = `
+        <div class="result valid">
+          <div class="result-header">
+            <div class="result-icon">✓</div>
+            <div>
+              <div class="result-title">Authentic Certificate</div>
+              <div class="result-subtitle">This certificate is valid and verified in the cloud database.</div>
+            </div>
+          </div>
+          <div class="result-body">
+            <dl>
+              <dt>Certificate ID</dt>
+              <dd class="mono">${data.cert_id}</dd>
+              <dt>Recipient</dt>
+              <dd>${data.student_name}</dd>
+              <dt>Program</dt>
+              <dd>${data.course_name}</dd>
+              <dt>Grade</dt>
+              <dd>${data.grade || '—'}</dd>
+              <dt>Issued On</dt>
+              <dd>${new Date(data.issue_date).toLocaleDateString('en-US', {
+                year: 'numeric', month: 'long', day: 'numeric'
+              })}</dd>
+            </dl>
+          </div>
+        </div>`;
+    }
+
+    document.getElementById('verifyBtn').addEventListener('click', () => {
+      const id = input.value.trim();
+      if (!id) { statusEl.textContent = '⚠ Please enter a certificate ID.'; return; }
+      verify(id);
+    });
+
+    input.addEventListener('keydown', e => {
+      if (e.key === 'Enter') document.getElementById('verifyBtn').click();
+    });
+
+    const urlId = new URLSearchParams(location.search).get('id');
+    if (urlId) {
+      input.value = urlId;
+      verify(urlId);
+    }
+  </script>
+</body>
+</html>
