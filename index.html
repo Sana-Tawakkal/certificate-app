@@ -3,12 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CertifyCloud — Verify Certificate</title>
+  <title>CertifyCloud — Certificate Generator</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
 
@@ -20,8 +21,8 @@
         CertifyCloud
       </a>
       <div class="nav-links">
-        <a href="index.html">Generate</a>
-        <a href="verify.html" class="active">Verify</a>
+        <a href="index.html" class="active">Generate</a>
+        <a href="verify.html">Verify</a>
       </div>
     </div>
   </nav>
@@ -30,32 +31,126 @@
   <section class="hero">
     <div class="hero-badge">
       <span class="dot"></span>
-      Instant cloud verification
+      Cloud-backed certification
     </div>
-    <h1>Verify a <span class="accent">certificate</span></h1>
-    <p>Enter the certificate ID below, or scan the QR code on any CertifyCloud certificate to validate its authenticity.</p>
+    <h1>Issue verifiable<br><span class="accent">digital certificates</span></h1>
+    <p>Create tamper-proof certificates secured in the cloud. Each one gets a unique ID and QR code that anyone can verify in seconds.</p>
   </section>
 
   <!-- MAIN -->
   <main>
     <div class="container">
 
-      <!-- SEARCH CARD -->
+      <!-- FORM CARD -->
       <div class="card">
         <div class="card-header">
-          <h2>Certificate Lookup</h2>
-          <p>Enter the unique ID printed on the certificate (format: CERT-XXXXXXXX).</p>
+          <h2>Certificate Details</h2>
+          <p>Fill in the information below to generate and store a new certificate.</p>
         </div>
 
-        <label>Certificate ID</label>
-        <input id="certIdInput" placeholder="e.g., CERT-A3F9K2M4" autocomplete="off" style="font-family: 'JetBrains Mono', monospace; letter-spacing: 0.06em;">
+        <div class="form-row">
+          <div>
+            <label>Student Name</label>
+            <input id="name" placeholder="e.g., Aarav Sharma">
+          </div>
+          <div>
+            <label>Grade / Achievement</label>
+            <input id="grade" placeholder="e.g., A+ / Distinction">
+          </div>
+        </div>
 
-        <button id="verifyBtn" class="full-width">Verify Certificate</button>
+        <label>Course / Program Name</label>
+        <input id="course" placeholder="e.g., Cloud Computing Professional Program">
+
+        <label>Issue Date</label>
+        <input id="date" type="date">
+
+        <button id="generateBtn" class="full-width" style="margin-top: 8px;">
+          Generate &amp; Save to Cloud
+        </button>
         <div class="status" id="status"></div>
       </div>
 
-      <!-- RESULT -->
-      <div id="result"></div>
+      <!-- CERTIFICATE PREVIEW -->
+      <div id="previewArea" style="display:none;">
+        <div class="section-head">
+          <div>
+            <h2>Certificate Preview</h2>
+            <p>Ready to share — download it as a high-resolution PNG.</p>
+          </div>
+          <button id="downloadBtn" class="secondary">⬇ Download PNG</button>
+        </div>
+
+        <div class="cert-wrapper">
+          <div id="certificate">
+            <!-- TOP BRAND BAR -->
+            <div class="cert-topbar">
+              <div class="cert-brand">
+                <div class="cert-logo">◈</div>
+                <div>
+                  <div class="cert-brand-name">CertifyCloud</div>
+                  <div class="cert-brand-sub">Certification Authority</div>
+                </div>
+              </div>
+              <div class="cert-verify-chip">
+                <span class="chip-dot"></span>
+                Blockchain Verified
+              </div>
+            </div>
+
+            <!-- MAIN BODY -->
+            <div class="cert-inner">
+              <div class="cert-seal-watermark"><span>◈</span></div>
+
+              <div class="cert-eyebrow">Certificate of Achievement</div>
+              <div class="cert-title">Professional Certification</div>
+              <div class="cert-divider"></div>
+
+              <div class="cert-lead">This is to certify that</div>
+              <div class="cert-name-wrap">
+                <div class="cert-name" id="cName">Student Name</div>
+              </div>
+
+              <div class="cert-course-label">has successfully completed the program</div>
+              <div class="cert-course" id="cCourse">Course Name</div>
+
+              <div class="cert-grade-wrap" style="margin-top: 16px;">
+                <span class="cert-grade-badge">Awarded: <span id="cGrade">—</span></span>
+              </div>
+
+              <!-- META ROW -->
+              <div class="cert-meta">
+                <div class="cert-meta-item">
+                  <div class="cert-meta-label">Issued On</div>
+                  <div class="cert-meta-value" id="cDate">—</div>
+                </div>
+
+                <div class="cert-meta-item">
+                  <div class="cert-sign-line"></div>
+                  <div class="cert-sign-name">Dr. R. Mehta</div>
+                  <div class="cert-sign-role">Authorized Signatory</div>
+                </div>
+
+                <div class="cert-meta-item">
+                  <img id="cQr" class="cert-qr" src="" alt="Verify QR">
+                  <div class="cert-meta-label">Scan to Verify</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- BOTTOM ID STRIP -->
+            <div class="cert-id-strip">
+              <div>
+                <span class="id-label">Certificate ID</span>
+                <span class="id-value" id="cId">—</span>
+              </div>
+              <div class="id-right">
+                <span class="pill">Verify at verify.html</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
     </div>
   </main>
@@ -72,97 +167,83 @@
   </footer>
 
   <script>
-    // ================= REPLACE THESE TWO LINES (same as index.html) =================
+    // ================= REPLACE THESE TWO LINES =================
     const SUPABASE_URL = "https://tbwxzfoqdzrbqivqlmnj.supabase.co";
     const SUPABASE_KEY = "sb_publishable_fX0aVfUANaSshCFmFAMAgg_HmxW2cTK";
-    // ================================================================================
+    // ===========================================================
 
     const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    const input = document.getElementById('certIdInput');
-    const statusEl = document.getElementById('status');
-    const resultEl = document.getElementById('result');
+    document.getElementById('date').valueAsDate = new Date();
 
-    async function verify(id) {
-      resultEl.innerHTML = '';
-      statusEl.textContent = 'Looking up in cloud...';
+    function makeCertId() {
+      const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+      let id = "CERT-";
+      for (let i = 0; i < 8; i++) {
+        id += chars[Math.floor(Math.random() * chars.length)];
+      }
+      return id;
+    }
 
-      const { data, error } = await sb
-        .from('certificates')
-        .select('*')
-        .eq('cert_id', id.toUpperCase())
-        .maybeSingle();
+    document.getElementById('generateBtn').addEventListener('click', async () => {
+      const name = document.getElementById('name').value.trim();
+      const course = document.getElementById('course').value.trim();
+      const grade = document.getElementById('grade').value.trim();
+      const date = document.getElementById('date').value;
+      const status = document.getElementById('status');
+
+      if (!name || !course || !date) {
+        status.textContent = "⚠ Please fill name, course and date.";
+        return;
+      }
+
+      status.textContent = "Saving to cloud...";
+      document.getElementById('generateBtn').disabled = true;
+
+      const certId = makeCertId();
+
+      const { error } = await sb.from('certificates').insert([{
+        cert_id: certId,
+        student_name: name,
+        course_name: course,
+        grade: grade || "Completed",
+        issue_date: date
+      }]);
+
+      document.getElementById('generateBtn').disabled = false;
 
       if (error) {
-        statusEl.textContent = '❌ Error: ' + error.message;
+        status.textContent = "❌ Cloud error: " + error.message;
         return;
       }
 
-      statusEl.textContent = '';
+      document.getElementById('cName').textContent = name;
+      document.getElementById('cCourse').textContent = course;
+      document.getElementById('cDate').textContent = new Date(date).toLocaleDateString('en-US', {
+        year: 'numeric', month: 'long', day: 'numeric'
+      });
+      document.getElementById('cGrade').textContent = grade || "Completed";
+      document.getElementById('cId').textContent = certId;
 
-      if (!data) {
-        resultEl.innerHTML = `
-          <div class="result invalid">
-            <div class="result-header">
-              <div class="result-icon">✕</div>
-              <div>
-                <div class="result-title">Certificate Not Found</div>
-                <div class="result-subtitle">We couldn't verify this certificate in our records.</div>
-              </div>
-            </div>
-            <div class="result-body">
-              <p style="font-size:14px; color:#4b5563; padding-top: 12px;">
-                No certificate exists in the cloud database with ID <strong style="font-family: 'JetBrains Mono', monospace;">${id}</strong>.
-                It may be a forgery or the ID was typed incorrectly.
-              </p>
-            </div>
-          </div>`;
-        return;
-      }
+      const verifyUrl = location.origin + location.pathname.replace("index.html", "") + "verify.html?id=" + certId;
 
-      resultEl.innerHTML = `
-        <div class="result valid">
-          <div class="result-header">
-            <div class="result-icon">✓</div>
-            <div>
-              <div class="result-title">Authentic Certificate</div>
-              <div class="result-subtitle">This certificate is valid and verified in the cloud database.</div>
-            </div>
-          </div>
-          <div class="result-body">
-            <dl>
-              <dt>Certificate ID</dt>
-              <dd class="mono">${data.cert_id}</dd>
-              <dt>Recipient</dt>
-              <dd>${data.student_name}</dd>
-              <dt>Program</dt>
-              <dd>${data.course_name}</dd>
-              <dt>Grade</dt>
-              <dd>${data.grade || '—'}</dd>
-              <dt>Issued On</dt>
-              <dd>${new Date(data.issue_date).toLocaleDateString('en-US', {
-                year: 'numeric', month: 'long', day: 'numeric'
-              })}</dd>
-            </dl>
-          </div>
-        </div>`;
-    }
+      document.getElementById('cQr').src =
+        "https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=" + encodeURIComponent(verifyUrl);
 
-    document.getElementById('verifyBtn').addEventListener('click', () => {
-      const id = input.value.trim();
-      if (!id) { statusEl.textContent = '⚠ Please enter a certificate ID.'; return; }
-      verify(id);
+      document.getElementById('previewArea').style.display = 'block';
+      status.textContent = "✅ Saved to cloud. Certificate ID: " + certId;
+      document.getElementById('previewArea').scrollIntoView({behavior: 'smooth'});
     });
 
-    input.addEventListener('keydown', e => {
-      if (e.key === 'Enter') document.getElementById('verifyBtn').click();
+    document.getElementById('downloadBtn').addEventListener('click', () => {
+      const cert = document.getElementById('certificate');
+      html2canvas(cert, { scale: 2, backgroundColor: '#ffffff', useCORS: true }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = 'certificate.png';
+        link.href = canvas.toDataURL();
+        link.click();
+      });
     });
-
-    const urlId = new URLSearchParams(location.search).get('id');
-    if (urlId) {
-      input.value = urlId;
-      verify(urlId);
-    }
   </script>
 </body>
 </html>
