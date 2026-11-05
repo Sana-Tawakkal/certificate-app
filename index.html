@@ -48,6 +48,9 @@
           <p>Fill in the information below to generate and store a new certificate.</p>
         </div>
 
+        <label>Institution / College Name</label>
+        <input id="institution" placeholder="e.g., ABC College of Engineering" value="ABC College of Engineering">
+
         <div class="form-row">
           <div>
             <label>Student Name</label>
@@ -88,8 +91,8 @@
               <div class="cert-brand">
                 <div class="cert-logo">◈</div>
                 <div>
-                  <div class="cert-brand-name">CertifyCloud</div>
-                  <div class="cert-brand-sub">Certification Authority</div>
+                  <div class="cert-brand-name" id="cInstitution">ABC College of Engineering</div>
+                  <div class="cert-brand-sub">Certificate Authority</div>
                 </div>
               </div>
               <div class="cert-verify-chip">
@@ -103,7 +106,7 @@
               <div class="cert-seal-watermark"><span>◈</span></div>
 
               <div class="cert-eyebrow">Certificate of Achievement</div>
-              <div class="cert-title">Professional Certification</div>
+              <div class="cert-title">Certificate of Participation</div>
               <div class="cert-divider"></div>
 
               <div class="cert-lead">This is to certify that</div>
@@ -111,7 +114,7 @@
                 <div class="cert-name" id="cName">Student Name</div>
               </div>
 
-              <div class="cert-course-label">has successfully completed the program</div>
+              <div class="cert-course-label">has successfully participated in the workshop</div>
               <div class="cert-course" id="cCourse">Course Name</div>
 
               <div class="cert-grade-wrap" style="margin-top: 16px;">
@@ -167,10 +170,10 @@
   </footer>
 
   <script>
-    // ================= REPLACE THESE TWO LINES =================
+    // ================= REPLACE THESE TWO LINES WITH YOUR REAL VALUES =================
     const SUPABASE_URL = "https://tbwxzfoqdzrbqivqlmnj.supabase.co";
     const SUPABASE_KEY = "sb_publishable_fX0aVfUANaSshCFmFAMAgg_HmxW2cTK";
-    // ===========================================================
+    // ===============================================================================
 
     const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
@@ -186,6 +189,7 @@
     }
 
     document.getElementById('generateBtn').addEventListener('click', async () => {
+      const institution = document.getElementById('institution').value.trim();
       const name = document.getElementById('name').value.trim();
       const course = document.getElementById('course').value.trim();
       const grade = document.getElementById('grade').value.trim();
@@ -217,6 +221,7 @@
         return;
       }
 
+      document.getElementById('cInstitution').textContent = institution || "Your Institution Name";
       document.getElementById('cName').textContent = name;
       document.getElementById('cCourse').textContent = course;
       document.getElementById('cDate').textContent = new Date(date).toLocaleDateString('en-US', {
