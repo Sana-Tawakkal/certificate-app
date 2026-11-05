@@ -6,7 +6,8 @@
   <title>CertifyCloud — Certificate Generator</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <!-- Added Playfair Display and Great Vibes for the traditional college look -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Great+Vibes&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -63,7 +64,7 @@
         </div>
 
         <label>Course / Program Name</label>
-        <input id="course" placeholder="e.g., Cloud Computing Professional Program">
+        <input id="course" placeholder="e.g., Cloud Computing Workshop">
 
         <label>Issue Date</label>
         <input id="date" type="date">
@@ -85,71 +86,63 @@
         </div>
 
         <div class="cert-wrapper">
+          <!-- COMPLETELY NEW TRADITIONAL DESIGN -->
           <div id="certificate">
-            <!-- TOP BRAND BAR -->
-            <div class="cert-topbar">
-              <div class="cert-brand">
-                <div class="cert-logo">◈</div>
-                <div>
-                  <div class="cert-brand-name" id="cInstitution">ABC College of Engineering</div>
-                  <div class="cert-brand-sub">Certificate Authority</div>
-                </div>
-              </div>
-              <div class="cert-verify-chip">
-                <span class="chip-dot"></span>
-                Blockchain Verified
-              </div>
-            </div>
+            <div class="cert-content">
+              
+              <div class="cert-inst-name" id="cInstitution">ABC College of Engineering</div>
+              <div class="cert-inst-sub">Certificate Authority</div>
 
-            <!-- MAIN BODY -->
-            <div class="cert-inner">
-              <div class="cert-seal-watermark"><span>◈</span></div>
+              <div class="cert-title-main">Certificate</div>
+              <div class="cert-title-sub">of Participation</div>
 
-              <div class="cert-eyebrow">Certificate of Achievement</div>
-              <div class="cert-title">Certificate of Participation</div>
-              <div class="cert-divider"></div>
+              <div class="cert-statement">This is to certify that</div>
+              
+              <div class="cert-student-name" id="cName">Student Name</div>
+              
+              <div class="cert-course-text">has successfully participated in the workshop</div>
+              <div class="cert-course-name" id="cCourse">Course Name</div>
 
-              <div class="cert-lead">This is to certify that</div>
-              <div class="cert-name-wrap">
-                <div class="cert-name" id="cName">Student Name</div>
-              </div>
-
-              <div class="cert-course-label">has successfully participated in the workshop</div>
-              <div class="cert-course" id="cCourse">Course Name</div>
-
-              <div class="cert-grade-wrap" style="margin-top: 16px;">
-                <span class="cert-grade-badge">Awarded: <span id="cGrade">—</span></span>
-              </div>
-
-              <!-- META ROW -->
-              <div class="cert-meta">
-                <div class="cert-meta-item">
-                  <div class="cert-meta-label">Issued On</div>
-                  <div class="cert-meta-value" id="cDate">—</div>
+              <!-- Bottom section with Signatures, Seal, and QR -->
+              <div class="cert-bottom-section">
+                
+                <div class="cert-signature-block">
+                  <div class="cert-sign-line"></div>
+                  <div class="cert-sign-name">Prof. A. Sharma</div>
+                  <div class="cert-sign-title">Workshop Coordinator</div>
                 </div>
 
-                <div class="cert-meta-item">
+                <!-- Gold Medal Seal -->
+                <div class="cert-seal-container">
+                  <div class="cert-seal">
+                    <div class="seal-icon">★</div>
+                    <div class="seal-text">Official<br>Seal</div>
+                  </div>
+                </div>
+
+                <div class="cert-signature-block">
                   <div class="cert-sign-line"></div>
                   <div class="cert-sign-name">Dr. R. Mehta</div>
-                  <div class="cert-sign-role">Authorized Signatory</div>
+                  <div class="cert-sign-title">Principal</div>
                 </div>
 
-                <div class="cert-meta-item">
-                  <img id="cQr" class="cert-qr" src="" alt="Verify QR">
-                  <div class="cert-meta-label">Scan to Verify</div>
+              </div>
+
+              <!-- QR & ID Strip -->
+              <div class="cert-footer-strip">
+                <div>
+                  Certificate ID: <strong id="cId">—</strong>
+                </div>
+                <div class="cert-qr-box">
+                  <img id="cQr" class="cert-qr-img" src="" alt="Verify QR">
+                  <div class="cert-qr-text">Scan to Verify</div>
+                </div>
+                <div style="text-align: right; max-width: 180px;">
+                  Issued on: <strong id="cDate" style="font-family: 'Inter'; font-weight:600; color: #444;">—</strong><br>
+                  <span style="font-size: 10px;">Verify at: verify.html</span>
                 </div>
               </div>
-            </div>
 
-            <!-- BOTTOM ID STRIP -->
-            <div class="cert-id-strip">
-              <div>
-                <span class="id-label">Certificate ID</span>
-                <span class="id-value" id="cId">—</span>
-              </div>
-              <div class="id-right">
-                <span class="pill">Verify at verify.html</span>
-              </div>
             </div>
           </div>
         </div>
@@ -227,8 +220,10 @@
       document.getElementById('cDate').textContent = new Date(date).toLocaleDateString('en-US', {
         year: 'numeric', month: 'long', day: 'numeric'
       });
-      document.getElementById('cGrade').textContent = grade || "Completed";
       document.getElementById('cId').textContent = certId;
+      
+      // Note: The grade badge was removed from the new traditional design to keep it 
+      // looking like a real college certificate, but the grade is still saved in Supabase.
 
       const verifyUrl = location.origin + location.pathname.replace("index.html", "") + "verify.html?id=" + certId;
 
@@ -242,7 +237,8 @@
 
     document.getElementById('downloadBtn').addEventListener('click', () => {
       const cert = document.getElementById('certificate');
-      html2canvas(cert, { scale: 2, backgroundColor: '#ffffff', useCORS: true }).then(canvas => {
+      // High resolution export
+      html2canvas(cert, { scale: 2, backgroundColor: '#fffdf8', useCORS: true }).then(canvas => {
         const link = document.createElement('a');
         link.download = 'certificate.png';
         link.href = canvas.toDataURL();
