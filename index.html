@@ -6,141 +6,110 @@
   <title>CertifyCloud — Certificate Generator</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <!-- Added Playfair Display and Great Vibes for the traditional college look -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Great+Vibes&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Great+Vibes&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
 
-  <!-- NAVBAR -->
   <nav class="nav">
-    <div class="nav-inner">
-      <a href="index.html" class="brand">
-        <div class="brand-mark">◈</div>
-        CertifyCloud
-      </a>
-      <div class="nav-links">
-        <a href="index.html" class="active">Generate</a>
-        <a href="verify.html">Verify</a>
-      </div>
+    <a href="index.html" class="brand">
+      <div class="brand-mark">◈</div> CertifyCloud
+    </a>
+    <div class="nav-links">
+      <a href="index.html" class="active">Generate</a>
+      <a href="verify.html">Verify</a>
     </div>
   </nav>
 
-  <!-- HERO -->
   <section class="hero">
-    <div class="hero-badge">
-      <span class="dot"></span>
-      Cloud-backed certification
-    </div>
-    <h1>Issue verifiable<br><span class="accent">digital certificates</span></h1>
-    <p>Create tamper-proof certificates secured in the cloud. Each one gets a unique ID and QR code that anyone can verify in seconds.</p>
+    <h1>Issue Verifiable Certificates</h1>
+    <p>Create tamper-proof college certificates secured in the Supabase cloud.</p>
   </section>
 
-  <!-- MAIN -->
   <main>
     <div class="container">
 
-      <!-- FORM CARD -->
       <div class="card">
-        <div class="card-header">
-          <h2>Certificate Details</h2>
-          <p>Fill in the information below to generate and store a new certificate.</p>
-        </div>
-
-        <label>Institution / College Name</label>
-        <input id="institution" placeholder="e.g., ABC College of Engineering" value="ABC College of Engineering">
+        <h2 style="margin-bottom: 20px; font-size: 18px; color: var(--navy);">Certificate Details</h2>
+        
+        <label>Institution Name</label>
+        <input id="institution" value="ABC College of Engineering">
 
         <div class="form-row">
           <div>
             <label>Student Name</label>
-            <input id="name" placeholder="e.g., Aarav Sharma">
+            <input id="name" placeholder="Enter student name">
           </div>
           <div>
-            <label>Grade / Achievement</label>
-            <input id="grade" placeholder="e.g., A+ / Distinction">
+            <label>Course / Workshop</label>
+            <input id="course" placeholder="e.g. Cloud Computing Workshop">
           </div>
         </div>
-
-        <label>Course / Program Name</label>
-        <input id="course" placeholder="e.g., Cloud Computing Workshop">
 
         <label>Issue Date</label>
         <input id="date" type="date">
 
-        <button id="generateBtn" class="full-width" style="margin-top: 8px;">
-          Generate &amp; Save to Cloud
-        </button>
+        <button id="generateBtn" style="margin-top: 10px;">Generate & Save to Cloud</button>
         <div class="status" id="status"></div>
       </div>
 
-      <!-- CERTIFICATE PREVIEW -->
+      <!-- PREVIEW AREA -->
       <div id="previewArea" style="display:none;">
-        <div class="section-head">
-          <div>
-            <h2>Certificate Preview</h2>
-            <p>Ready to share — download it as a high-resolution PNG.</p>
-          </div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+          <h2 style="font-size: 18px; color: var(--navy);">Preview & Download</h2>
           <button id="downloadBtn" class="secondary">⬇ Download PNG</button>
         </div>
 
         <div class="cert-wrapper">
-          <!-- COMPLETELY NEW TRADITIONAL DESIGN -->
           <div id="certificate">
-            <div class="cert-content">
+            <div class="cert-inner">
               
               <div class="cert-inst-name" id="cInstitution">ABC College of Engineering</div>
-              <div class="cert-inst-sub">Certificate Authority</div>
-
-              <div class="cert-title-main">Certificate</div>
-              <div class="cert-title-sub">of Participation</div>
-
-              <div class="cert-statement">This is to certify that</div>
               
+              <div class="cert-title-main">Certificate of Participation</div>
+              
+              <div class="cert-statement">This is to certify that</div>
               <div class="cert-student-name" id="cName">Student Name</div>
               
               <div class="cert-course-text">has successfully participated in the workshop</div>
               <div class="cert-course-name" id="cCourse">Course Name</div>
 
-              <!-- Bottom section with Signatures, Seal, and QR -->
-              <div class="cert-bottom-section">
-                
-                <div class="cert-signature-block">
-                  <div class="cert-sign-line"></div>
-                  <div class="cert-sign-name">Prof. A. Sharma</div>
-                  <div class="cert-sign-title">Workshop Coordinator</div>
-                </div>
+              <!-- BOTTOM SECTION USING TABLE (html2canvas safe) -->
+              <table class="cert-table">
+                <tr>
+                  <!-- Left Signature -->
+                  <td>
+                    <div class="sign-line"></div>
+                    <div class="sign-name">Dr. R. Mehta</div>
+                    <div class="sign-title">Principal</div>
+                  </td>
+                  
+                  <!-- Center Gold Seal -->
+                  <td>
+                    <div class="seal-wrapper">
+                      <div class="ribbon ribbon-left"></div>
+                      <div class="ribbon ribbon-right"></div>
+                      <div class="seal-circle">
+                        <span>★</span>
+                        <p>Official<br>Seal</p>
+                      </div>
+                    </div>
+                  </td>
+                  
+                  <!-- Right QR Code -->
+                  <td>
+                    <img id="cQr" class="qr-img" src="" alt="QR">
+                    <div class="qr-text">Scan to Verify</div>
+                  </td>
+                </tr>
+              </table>
 
-                <!-- Gold Medal Seal -->
-                <div class="cert-seal-container">
-                  <div class="cert-seal">
-                    <div class="seal-icon">★</div>
-                    <div class="seal-text">Official<br>Seal</div>
-                  </div>
-                </div>
-
-                <div class="cert-signature-block">
-                  <div class="cert-sign-line"></div>
-                  <div class="cert-sign-name">Dr. R. Mehta</div>
-                  <div class="cert-sign-title">Principal</div>
-                </div>
-
-              </div>
-
-              <!-- QR & ID Strip -->
-              <div class="cert-footer-strip">
-                <div>
-                  Certificate ID: <strong id="cId">—</strong>
-                </div>
-                <div class="cert-qr-box">
-                  <img id="cQr" class="cert-qr-img" src="" alt="Verify QR">
-                  <div class="cert-qr-text">Scan to Verify</div>
-                </div>
-                <div style="text-align: right; max-width: 180px;">
-                  Issued on: <strong id="cDate" style="font-family: 'Inter'; font-weight:600; color: #444;">—</strong><br>
-                  <span style="font-size: 10px;">Verify at: verify.html</span>
-                </div>
+              <!-- FOOTER -->
+              <div class="cert-id-strip">
+                <div>Certificate ID: <strong id="cId">—</strong></div>
+                <div>Issued on: <strong id="cDate" style="font-family: 'Inter'; font-weight: 600;">—</strong></div>
               </div>
 
             </div>
@@ -150,17 +119,6 @@
 
     </div>
   </main>
-
-  <!-- FOOTER -->
-  <footer>
-    <div class="footer-inner">
-      <div class="footer-brand">
-        <div class="brand-mark" style="width: 24px; height: 24px; font-size: 12px;">◈</div>
-        CertifyCloud
-      </div>
-      <div>Secured by Supabase · © 2025 CertifyCloud</div>
-    </div>
-  </footer>
 
   <script>
     // ================= REPLACE THESE TWO LINES WITH YOUR REAL VALUES =================
@@ -185,12 +143,11 @@
       const institution = document.getElementById('institution').value.trim();
       const name = document.getElementById('name').value.trim();
       const course = document.getElementById('course').value.trim();
-      const grade = document.getElementById('grade').value.trim();
       const date = document.getElementById('date').value;
       const status = document.getElementById('status');
 
       if (!name || !course || !date) {
-        status.textContent = "⚠ Please fill name, course and date.";
+        status.textContent = "⚠ Please fill all fields.";
         return;
       }
 
@@ -203,7 +160,7 @@
         cert_id: certId,
         student_name: name,
         course_name: course,
-        grade: grade || "Completed",
+        grade: "Completed", // Hardcoded since we removed it from the traditional layout
         issue_date: date
       }]);
 
@@ -214,35 +171,49 @@
         return;
       }
 
+      // Populate the certificate
       document.getElementById('cInstitution').textContent = institution || "Your Institution Name";
       document.getElementById('cName').textContent = name;
       document.getElementById('cCourse').textContent = course;
+      
       document.getElementById('cDate').textContent = new Date(date).toLocaleDateString('en-US', {
         year: 'numeric', month: 'long', day: 'numeric'
       });
-      document.getElementById('cId').textContent = certId;
       
-      // Note: The grade badge was removed from the new traditional design to keep it 
-      // looking like a real college certificate, but the grade is still saved in Supabase.
+      document.getElementById('cId').textContent = certId;
 
+      // Generate QR Code
       const verifyUrl = location.origin + location.pathname.replace("index.html", "") + "verify.html?id=" + certId;
-
-      document.getElementById('cQr').src =
-        "https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=" + encodeURIComponent(verifyUrl);
+      document.getElementById('cQr').src = "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=" + encodeURIComponent(verifyUrl);
 
       document.getElementById('previewArea').style.display = 'block';
-      status.textContent = "✅ Saved to cloud. Certificate ID: " + certId;
+      status.textContent = "✅ Saved to cloud.";
       document.getElementById('previewArea').scrollIntoView({behavior: 'smooth'});
     });
 
-    document.getElementById('downloadBtn').addEventListener('click', () => {
+    // ROBUST DOWNLOAD LOGIC
+    document.getElementById('downloadBtn').addEventListener('click', async () => {
       const cert = document.getElementById('certificate');
-      // High resolution export
-      html2canvas(cert, { scale: 2, backgroundColor: '#fffdf8', useCORS: true }).then(canvas => {
+      const btn = document.getElementById('downloadBtn');
+      
+      btn.textContent = "Downloading...";
+      
+      // Ensure fonts are fully loaded before screenshotting
+      await document.fonts.ready;
+
+      html2canvas(cert, { 
+        scale: 2, // High resolution
+        backgroundColor: '#fcfbf7', 
+        useCORS: true
+      }).then(canvas => {
         const link = document.createElement('a');
         link.download = 'certificate.png';
-        link.href = canvas.toDataURL();
+        link.href = canvas.toDataURL('image/png');
         link.click();
+        btn.textContent = "⬇ Download PNG";
+      }).catch(err => {
+        alert("Download failed: " + err);
+        btn.textContent = "⬇ Download PNG";
       });
     });
   </script>
