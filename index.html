@@ -3,219 +3,166 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CertifyCloud — Certificate Generator</title>
+  <title>CertifyCloud — Verify Certificate</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
 
+  <!-- NAVBAR -->
   <nav class="nav">
-    <a href="index.html" class="brand">
-      <div class="brand-mark">◈</div> CertifyCloud
-    </a>
-    <div class="nav-links">
-      <a href="index.html" class="active">Generate</a>
-      <a href="verify.html">Verify</a>
+    <div class="nav-inner">
+      <a href="index.html" class="brand">
+        <div class="brand-mark">◈</div>
+        CertifyCloud
+      </a>
+      <div class="nav-links">
+        <a href="index.html">Generate</a>
+        <a href="verify.html" class="active">Verify</a>
+      </div>
     </div>
   </nav>
 
+  <!-- HERO -->
   <section class="hero">
-    <h1>Issue Verifiable Certificates</h1>
-    <p>Create tamper-proof college certificates secured in the Supabase cloud.</p>
+    <div class="hero-badge">
+      <span class="dot"></span>
+      Instant cloud verification
+    </div>
+    <h1>Verify a <span class="accent">certificate</span></h1>
+    <p>Enter the certificate ID below, or scan the QR code on any CertifyCloud certificate to validate its authenticity.</p>
   </section>
 
+  <!-- MAIN -->
   <main>
     <div class="container">
 
+      <!-- SEARCH CARD -->
       <div class="card">
-        <h2 style="margin-bottom: 20px; font-size: 18px; color: var(--navy);">Certificate Details</h2>
-        
-        <label>Institution Name</label>
-        <input id="institution" value="ABC College of Engineering">
-
-        <div class="form-row">
-          <div>
-            <label>Student Name</label>
-            <input id="name" placeholder="Enter student name">
-          </div>
-          <div>
-            <label>Course / Workshop</label>
-            <input id="course" placeholder="e.g. Cloud Computing Workshop">
-          </div>
+        <div class="card-header">
+          <h2>Certificate Lookup</h2>
+          <p>Enter the unique ID printed on the certificate (format: CERT-XXXXXXXX).</p>
         </div>
 
-        <label>Issue Date</label>
-        <input id="date" type="date">
+        <label>Certificate ID</label>
+        <input id="certIdInput" placeholder="e.g., CERT-A3F9K2M4" autocomplete="off" style="font-family: 'JetBrains Mono', monospace; letter-spacing: 0.06em;">
 
-        <button id="generateBtn" style="margin-top: 10px;">Generate & Save to Cloud</button>
+        <button id="verifyBtn" class="full-width">Verify Certificate</button>
         <div class="status" id="status"></div>
       </div>
 
-      <!-- PREVIEW AREA -->
-      <div id="previewArea" style="display:none;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-          <h2 style="font-size: 18px; color: var(--navy);">Preview & Download</h2>
-          <button id="downloadBtn" class="secondary">⬇ Download PNG</button>
-        </div>
-
-        <div class="cert-wrapper">
-          <div id="certificate">
-            <div class="cert-inner">
-              
-              <div class="cert-inst-name" id="cInstitution">ABC College of Engineering</div>
-              
-              <div class="cert-title-main">Certificate of Participation</div>
-              
-              <div class="cert-statement">This is to certify that</div>
-              <div class="cert-student-name" id="cName">Student Name</div>
-              
-              <div class="cert-course-text">has successfully participated in the workshop</div>
-              <div class="cert-course-name" id="cCourse">Course Name</div>
-
-              <!-- BOTTOM SECTION USING TABLE (html2canvas safe) -->
-              <table class="cert-table">
-                <tr>
-                  <!-- Left Signature -->
-                  <td>
-                    <div class="sign-line"></div>
-                    <div class="sign-name">Dr. R. Mehta</div>
-                    <div class="sign-title">Principal</div>
-                  </td>
-                  
-                  <!-- Center Gold Seal -->
-                  <td>
-                    <div class="seal-wrapper">
-                      <div class="ribbon ribbon-left"></div>
-                      <div class="ribbon ribbon-right"></div>
-                      <div class="seal-circle">
-                        <span>★</span>
-                        <p>Official<br>Seal</p>
-                      </div>
-                    </div>
-                  </td>
-                  
-                  <!-- Right QR Code -->
-                  <td>
-                    <img id="cQr" class="qr-img" src="" alt="QR">
-                    <div class="qr-text">Scan to Verify</div>
-                  </td>
-                </tr>
-              </table>
-
-              <!-- FOOTER -->
-              <div class="cert-id-strip">
-                <div>Certificate ID: <strong id="cId">—</strong></div>
-                <div>Issued on: <strong id="cDate" style="font-family: 'Inter'; font-weight: 600;">—</strong></div>
-              </div>
-
-            </div>
-          </div>
-        </div>
-      </div>
+      <!-- RESULT -->
+      <div id="result"></div>
 
     </div>
   </main>
 
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <div class="brand-mark" style="width: 24px; height: 24px; font-size: 12px;">◈</div>
+        CertifyCloud
+      </div>
+      <div>Secured by Supabase · © 2025 CertifyCloud</div>
+    </div>
+  </footer>
+
   <script>
-    // ================= REPLACE THESE TWO LINES WITH YOUR REAL VALUES =================
+    // ================= REPLACE THESE TWO LINES (same as index.html) =================
     const SUPABASE_URL = "https://tbwxzfoqdzrbqivqlmnj.supabase.co";
     const SUPABASE_KEY = "sb_publishable_fX0aVfUANaSshCFmFAMAgg_HmxW2cTK";
-    // ===============================================================================
+    // ================================================================================
 
     const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    document.getElementById('date').valueAsDate = new Date();
+    const input = document.getElementById('certIdInput');
+    const statusEl = document.getElementById('status');
+    const resultEl = document.getElementById('result');
 
-    function makeCertId() {
-      const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-      let id = "CERT-";
-      for (let i = 0; i < 8; i++) {
-        id += chars[Math.floor(Math.random() * chars.length)];
-      }
-      return id;
-    }
+    async function verify(id) {
+      resultEl.innerHTML = '';
+      statusEl.textContent = 'Looking up in cloud...';
 
-    document.getElementById('generateBtn').addEventListener('click', async () => {
-      const institution = document.getElementById('institution').value.trim();
-      const name = document.getElementById('name').value.trim();
-      const course = document.getElementById('course').value.trim();
-      const date = document.getElementById('date').value;
-      const status = document.getElementById('status');
-
-      if (!name || !course || !date) {
-        status.textContent = "⚠ Please fill all fields.";
-        return;
-      }
-
-      status.textContent = "Saving to cloud...";
-      document.getElementById('generateBtn').disabled = true;
-
-      const certId = makeCertId();
-
-      const { error } = await sb.from('certificates').insert([{
-        cert_id: certId,
-        student_name: name,
-        course_name: course,
-        grade: "Completed", // Hardcoded since we removed it from the traditional layout
-        issue_date: date
-      }]);
-
-      document.getElementById('generateBtn').disabled = false;
+      const { data, error } = await sb
+        .from('certificates')
+        .select('*')
+        .eq('cert_id', id.toUpperCase())
+        .maybeSingle();
 
       if (error) {
-        status.textContent = "❌ Cloud error: " + error.message;
+        statusEl.textContent = '❌ Error: ' + error.message;
         return;
       }
 
-      // Populate the certificate
-      document.getElementById('cInstitution').textContent = institution || "Your Institution Name";
-      document.getElementById('cName').textContent = name;
-      document.getElementById('cCourse').textContent = course;
-      
-      document.getElementById('cDate').textContent = new Date(date).toLocaleDateString('en-US', {
-        year: 'numeric', month: 'long', day: 'numeric'
-      });
-      
-      document.getElementById('cId').textContent = certId;
+      statusEl.textContent = '';
 
-      // Generate QR Code
-      const verifyUrl = location.origin + location.pathname.replace("index.html", "") + "verify.html?id=" + certId;
-      document.getElementById('cQr').src = "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=" + encodeURIComponent(verifyUrl);
+      if (!data) {
+        resultEl.innerHTML = `
+          <div class="result invalid">
+            <div class="result-header">
+              <div class="result-icon">✕</div>
+              <div>
+                <div class="result-title">Certificate Not Found</div>
+                <div class="result-subtitle">We couldn't verify this certificate in our records.</div>
+              </div>
+            </div>
+            <div class="result-body">
+              <p style="font-size:14px; color:#4b5563; padding-top: 12px;">
+                No certificate exists in the cloud database with ID <strong style="font-family: 'JetBrains Mono', monospace;">${id}</strong>.
+                It may be a forgery or the ID was typed incorrectly.
+              </p>
+            </div>
+          </div>`;
+        return;
+      }
 
-      document.getElementById('previewArea').style.display = 'block';
-      status.textContent = "✅ Saved to cloud.";
-      document.getElementById('previewArea').scrollIntoView({behavior: 'smooth'});
+      resultEl.innerHTML = `
+        <div class="result valid">
+          <div class="result-header">
+            <div class="result-icon">✓</div>
+            <div>
+              <div class="result-title">Authentic Certificate</div>
+              <div class="result-subtitle">This certificate is valid and verified in the cloud database.</div>
+            </div>
+          </div>
+          <div class="result-body">
+            <dl>
+              <dt>Certificate ID</dt>
+              <dd class="mono">${data.cert_id}</dd>
+              <dt>Recipient</dt>
+              <dd>${data.student_name}</dd>
+              <dt>Program</dt>
+              <dd>${data.course_name}</dd>
+              <dt>Grade</dt>
+              <dd>${data.grade || '—'}</dd>
+              <dt>Issued On</dt>
+              <dd>${new Date(data.issue_date).toLocaleDateString('en-US', {
+                year: 'numeric', month: 'long', day: 'numeric'
+              })}</dd>
+            </dl>
+          </div>
+        </div>`;
+    }
+
+    document.getElementById('verifyBtn').addEventListener('click', () => {
+      const id = input.value.trim();
+      if (!id) { statusEl.textContent = '⚠ Please enter a certificate ID.'; return; }
+      verify(id);
     });
 
-    // ROBUST DOWNLOAD LOGIC
-    document.getElementById('downloadBtn').addEventListener('click', async () => {
-      const cert = document.getElementById('certificate');
-      const btn = document.getElementById('downloadBtn');
-      
-      btn.textContent = "Downloading...";
-      
-      // Ensure fonts are fully loaded before screenshotting
-      await document.fonts.ready;
-
-      html2canvas(cert, { 
-        scale: 2, // High resolution
-        backgroundColor: '#fcfbf7', 
-        useCORS: true
-      }).then(canvas => {
-        const link = document.createElement('a');
-        link.download = 'certificate.png';
-        link.href = canvas.toDataURL('image/png');
-        link.click();
-        btn.textContent = "⬇ Download PNG";
-      }).catch(err => {
-        alert("Download failed: " + err);
-        btn.textContent = "⬇ Download PNG";
-      });
+    input.addEventListener('keydown', e => {
+      if (e.key === 'Enter') document.getElementById('verifyBtn').click();
     });
+
+    const urlId = new URLSearchParams(location.search).get('id');
+    if (urlId) {
+      input.value = urlId;
+      verify(urlId);
+    }
   </script>
 </body>
 </html>
